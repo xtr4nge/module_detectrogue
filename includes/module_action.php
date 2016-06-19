@@ -92,10 +92,13 @@ if($service == "detectrogue") {
 		
 		
 		# OPTIONS
+		if ($mod_detectrogue_vigilant == "1") $options_vigilant = "-f list.conf";
+		if ($mod_detectrogue_karma == "1") $option_detectrogue_karma = "-k";
 		if ($mod_detectrogue_channel != "") $options_channel = "-c $mod_detectrogue_channel";
 		if ($mod_detectrogue_alert == "1") $options_alert = "-a";
 		
-		$exec = "python scan-rogue.py -i mon0 $options_channel $options_alert -l $mod_logs -f list.conf > /dev/null 2 &";
+		//$exec = "python scan-rogue.py -i mon0 $options_channel $options_alert -l $mod_logs -f list.conf > /dev/null 2 &";
+		$exec = "python scan-rogue.py -i mon0 $options_channel $options_alert $options_vigilant $option_detectrogue_karma -l $mod_logs  > /dev/null 2 &";
 		exec_fruitywifi($exec);
 	
 	} else if($action == "stop") {

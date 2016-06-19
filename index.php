@@ -144,6 +144,18 @@ Loading, please wait...
         <!-- OPTIONS -->
         <div id="tab-options" class="history">
             <h4>
+                DETECT
+            </h4>
+            <h5>
+                <input id="detectrogue_vigilant" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_vigilant == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_vigilant')" >
+                VIGILANT (Monitor Tab)
+                <br>
+                <input id="detectrogue_karma" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_karma == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_karma')" >
+                KARMA|MANA
+                
+            </h5>
+            <hr>
+            <h4>
                 LOG
             </h4>
             <h5>

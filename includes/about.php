@@ -12,6 +12,8 @@
 
 <br><b>[OPTIONS]</b>
 <br>
+<br><b>Vigilant</b>: Enables detection using filters on Monitor tab.
+<br><b>Karma|Mana</b>: Enables detection against Karma and Mana attacks.
 <br><b>Delay</b>: time between ssid|bssid alert display time in log.
 <br><b>Alert</b>: enables|disables email alerts
 <br><b>Email</b>: Sender and Recipient for email alerts.

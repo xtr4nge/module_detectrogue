@@ -1,6 +1,6 @@
 <?php
 $mod_name="detectrogue";
-$mod_version="1.0";
+$mod_version="1.1";
 $mod_path="/usr/share/fruitywifi/www/modules/$mod_name";
 $mod_logs="$log_path/$mod_name.log"; 
 $mod_logs_history="$mod_path/includes/logs/";
@@ -9,7 +9,9 @@ $mod_type="service";
 $mod_alias="DetectRogue";
 
 # OPTIONS
-$mod_detectrogue_alert="0";
+$mod_detectrogue_vigilant="1";
+$mod_detectrogue_karma="1";
+$mod_detectrogue_alert="1";
 $mod_detectrogue_alert_delay="5";
 $mod_detectrogue_smtp_server="localhost";
 $mod_detectrogue_smtp_port="25";

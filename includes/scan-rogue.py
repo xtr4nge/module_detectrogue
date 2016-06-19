@@ -45,6 +45,7 @@ def usage():
     print "-f <file> --file=<file>                  ap list to monitor [format: ssid|bssid,bssid] (from file)"
     print "-d <seconds> --delay=<seconds>           seconds between alerts"
     print "-a --alert                               enables email alerts"
+    print "-k --karma                               detects karma|mana attacks"
     print "-h                                       Print this help message."
     print ""
     print "Author: xtr4nge"
@@ -60,10 +61,11 @@ def parseOptions(argv):
     FILE = ""
     DELAY = 5
     ALERT = False
+    KARMA = False
 
     try:
-        opts, args = getopt.getopt(argv, "hi:t:l:c:m:f:d:a",
-                                   ["help", "interface=", "time=", "log=", "channel=", "monitor=", "file=", "delay=", "alert"])
+        opts, args = getopt.getopt(argv, "hi:t:l:c:m:f:d:ak",
+                                   ["help", "interface=", "time=", "log=", "channel=", "monitor=", "file=", "delay=", "alert", "karma"])
 
         for opt, arg in opts:
             if opt in ("-h", "--help"):
@@ -87,6 +89,13 @@ def parseOptions(argv):
                 DELAY = arg
             elif opt in ("-a", "--alert"):
                 ALERT = True
+            elif opt in ("-k", "--karma"):
+                KARMA = True
+        
+        # CHECK OPTIONS
+        if MONITOR == "" and FILE == "" and KARMA == False:
+            usage()
+            sys.exit()
         
         # CHANNEL INTO INT ARRAY
         TEMP = CHANNEL.split(",")
@@ -94,7 +103,7 @@ def parseOptions(argv):
         for i in TEMP:
             CHANNEL.append(int(i))
         
-        return (INTERFACE, TIME, LOG, CHANNEL, MONITOR, FILE, DELAY, ALERT)
+        return (INTERFACE, TIME, LOG, CHANNEL, MONITOR, FILE, DELAY, ALERT, KARMA)
                     
     except getopt.GetoptError:           
         usage()
@@ -152,10 +161,12 @@ def sendMail(MSG):
 # GLOBAL VARIABLES
 # -------------------------
 
-(INTERFACE, TIME, LOG, CHANNEL, MONITOR, FILE, DELAY, ALERT) = parseOptions(sys.argv[1:])
+(INTERFACE, TIME, LOG, CHANNEL, MONITOR, FILE, DELAY, ALERT, KARMA) = parseOptions(sys.argv[1:])
 
 INVENTORY = {}
 ROGUE = {}
+APLIST = {}
+ROGUEKARMA = {}
 
 # LOAD SSID|BSSID FROM MONITOR
 if MONITOR != "":
@@ -191,6 +202,7 @@ def sniffer(pkt):
     global CHECK
     global INVENTORY
     global ALERT
+    global KARMA
     
     ## Done in the lfilter param
     # if Dot11Beacon not in pkt and Dot11ProbeResp not in pkt:
@@ -216,37 +228,64 @@ def sniffer(pkt):
     b = datetime.datetime.now()
 
     
-    # ---- MAGIC HERE ----
+    # ---- MAGIC HERE [VIGILANT (MONITOR)] ----
     
-    #SHOW OK
-    if ssid in INVENTORY and bssid in INVENTORY[ssid]:
-        pass
-        #print "OK: " + str(bssid) + " > " + str(ssid)
-    
-    # DETECT ROGUE
-    if ssid in INVENTORY and bssid not in INVENTORY[ssid]:
-        pass
+    if len(INVENTORY) > 0:
+        #SHOW OK
+        if ssid in INVENTORY and bssid in INVENTORY[ssid]:
+            pass
+            #print "OK: " + str(bssid) + " > " + str(ssid)
         
-        if bssid not in ROGUE: # FIRST ALERT
-            ROGUE[bssid] = int(time.time())
-            # PRINT ALERT
-            print "ROGUE: " + str(bssid) + " > " + str(ssid) + " ["+str(channel)+"]"
-            if LOG != "":
-                MSG = str(bssid) + "," + str(ssid) + "," + str(channel) + " [NEW]"
-                logEvent(LOG, MSG)
-            # SEND ALERT
-            if ALERT:
-                sendMail("SSID: " + str(ssid) + "\nBSSID: " + str(bssid) + "\nCHANNEL: " + str(channel))
-                if LOG != "": logEvent(LOG, "EMAIL SENT.")
+        # DETECT ROGUE
+        if ssid in INVENTORY and bssid not in INVENTORY[ssid]:
+            pass
             
-        elif checkDelay(ROGUE[bssid], DELAY): # FOLLOWING ALERT
-            ROGUE[bssid] = int(time.time())
-            # PRINT ALERT
-            print "ROGUE: " + str(bssid) + " > " + str(ssid) + " ["+str(channel)+"]"
-            if LOG != "":
-                MSG = str(bssid) + "," + str(ssid) + "," + str(channel)
-                logEvent(LOG, MSG)
-        
+            if bssid not in ROGUE: # FIRST ALERT
+                ROGUE[bssid] = int(time.time())
+                # PRINT ALERT
+                print "ROGUE: " + str(bssid) + " > " + str(ssid) + " ["+str(channel)+"]"
+                if LOG != "":
+                    MSG = str(bssid) + "," + str(ssid) + "," + str(channel) + " [NEW]"
+                    logEvent(LOG, MSG)
+                # SEND ALERT
+                if ALERT:
+                    sendMail("SSID: " + str(ssid) + "\nBSSID: " + str(bssid) + "\nCHANNEL: " + str(channel))
+                    if LOG != "": logEvent(LOG, "EMAIL SENT.")
+                
+            elif checkDelay(ROGUE[bssid], DELAY): # FOLLOWING ALERT
+                ROGUE[bssid] = int(time.time())
+                # PRINT ALERT
+                print "ROGUE: " + str(bssid) + " > " + str(ssid) + " ["+str(channel)+"]"
+                if LOG != "":
+                    MSG = str(bssid) + "," + str(ssid) + "," + str(channel)
+                    logEvent(LOG, MSG)
+    
+    
+    # ---- MAGIC HERE [KARMA|MANA] ----
+    
+    # DETECT KARMA|MANA ATTACKS
+    if KARMA:
+        if bssid not in APLIST and ssid != None and ssid != "":
+            APLIST[bssid] = [ssid]
+        elif bssid in APLIST and ssid != None and ssid != "" and ssid not in APLIST[bssid]:
+            APLIST[bssid].append(ssid)
+            if len(APLIST[bssid]) > 1:
+                if bssid not in ROGUEKARMA: # FIRST ALERT
+                    ROGUEKARMA[bssid] = int(time.time())
+                    print "ROGUE [KARMA]: " + str(bssid) + " | "+str(channel) + " | " + str(APLIST[bssid])
+                    if LOG != "":
+                        MSG = str(bssid) + "," + str(APLIST[bssid]) + "," + str(channel) + " [KARMA|MANA] [NEW]"
+                        logEvent(LOG, MSG)
+                    if ALERT:
+                        sendMail("[KARMA|MANA]\nSSID: " + str(APLIST[bssid]) + "\nBSSID: " + str(bssid) + "\nCHANNEL: " + str(channel))
+                        if LOG != "": logEvent(LOG, "EMAIL SENT [KARMA|MANA].")
+                elif checkDelay(ROGUEKARMA[bssid], DELAY): # FOLLOWING ALERT
+                    ROGUEKARMA[bssid] = int(time.time())
+                    print "ROGUE [KARMA]: " + str(bssid) + " | "+str(channel) + " | " + str(APLIST[bssid])
+                    if LOG != "":
+                        MSG = str(bssid) + "," + str(APLIST[bssid]) + "," + str(channel) + " [KARMA|MANA]"
+                        logEvent(LOG, MSG)
+    
     # --------------------
     
     if (b - a) > datetime.timedelta(seconds=TIME) and TIME > 0:
