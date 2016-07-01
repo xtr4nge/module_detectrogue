@@ -146,24 +146,24 @@ Loading, please wait...
             <h4>
                 DETECT
             </h4>
-            <h5>
+            
                 <input id="detectrogue_vigilant" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_vigilant == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_vigilant')" >
                 VIGILANT (Monitor Tab)
                 <br>
                 <input id="detectrogue_karma" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_karma == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_karma')" >
                 KARMA|MANA
                 
-            </h5>
+            
             <hr>
             <h4>
                 LOG
             </h4>
-            <h5>
+            
                 Delay (seconds)
                 <br>
                 <input id="detectrogue_alert_delay" class="form-control input-sm" placeholder="Delay" value="<?=$mod_detectrogue_alert_delay?>" style="width: 180px; display: inline-block; " type="text" />
                 <input class="btn btn-default btn-sm" type="button" value="save" onclick="setOption('detectrogue_alert_delay', 'mod_detectrogue_alert_delay');">
-            </h5>
+            
             <hr>
             <h4>
                 <input id="detectrogue_alert" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_alert == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_alert')" >
@@ -173,17 +173,17 @@ Loading, please wait...
             <h4>
                 EMAIL
             </h4>
-            <h5>
+            
                 <div style="width: 50px; display: inline-block">From</div> <input id="detectrogue_email_from" class="form-control input-sm" placeholder="From" value="<?=$mod_detectrogue_email_from?>" style="width: 180px; display: inline-block; " type="text" />
                 <br>
                 <div style="width: 50px; display: inline-block">To</div> <input id="detectrogue_email_to" class="form-control input-sm" placeholder="To" value="<?=$mod_detectrogue_email_to?>" style="width: 180px; display: inline-block; " type="text" />
                 <input class="btn btn-default btn-sm" type="button" value="save" onclick="setOption('detectrogue_email_from', 'mod_detectrogue_email_from'); setOption('detectrogue_email_to', 'mod_detectrogue_email_to'); setOption('detectrogue_email_subject', 'mod_detectrogue_email_subject');">
-            </h5>
+            
             <hr>
             <h4>
                 SMTP
             </h4>
-            <h5>
+            
                 <div style="width: 50px; display: inline-block">Server</div> <input id="detectrogue_smtp_server" class="form-control input-sm" placeholder="Server" value="<?=$mod_detectrogue_smtp_server?>" style="width: 180px; display: inline-block; " type="text" />
                 <br>
                 <div style="width: 50px; display: inline-block">Port</div> <input id="detectrogue_smtp_port" class="form-control input-sm" placeholder="Port" value="<?=$mod_detectrogue_smtp_port?>" style="width: 180px; display: inline-block; " type="text" />
@@ -199,7 +199,7 @@ Loading, please wait...
                 <div style="width: 54px; display: inline-block"></div><input id="detectrogue_smtp_auth" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_smtp_auth == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_smtp_auth')" > auth
                 <br>
                 <div style="width: 54px; display: inline-block"></div><input id="detectrogue_smtp_starttls" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_smtp_starttls == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_smtp_starttls')" > starttls
-            </h5>
+            
             <hr>
             <h4>
                 <input id="detectrogue_jump" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_jump == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_jump')" >
