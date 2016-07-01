@@ -46,6 +46,7 @@ def usage():
     print "-d <seconds> --delay=<seconds>           seconds between alerts"
     print "-a --alert                               enables email alerts"
     print "-k --karma                               detects karma|mana attacks"
+    print "-j --jump                                enables channel hopping"
     print "-h                                       Print this help message."
     print ""
     print "Author: xtr4nge"
@@ -62,10 +63,11 @@ def parseOptions(argv):
     DELAY = 5
     ALERT = False
     KARMA = False
+    JUMP = False
 
     try:
-        opts, args = getopt.getopt(argv, "hi:t:l:c:m:f:d:ak",
-                                   ["help", "interface=", "time=", "log=", "channel=", "monitor=", "file=", "delay=", "alert", "karma"])
+        opts, args = getopt.getopt(argv, "hi:t:l:c:m:f:d:akj",
+                                   ["help", "interface=", "time=", "log=", "channel=", "monitor=", "file=", "delay=", "alert", "karma", "jump"])
 
         for opt, arg in opts:
             if opt in ("-h", "--help"):
@@ -91,6 +93,8 @@ def parseOptions(argv):
                 ALERT = True
             elif opt in ("-k", "--karma"):
                 KARMA = True
+            elif opt in ("-j", "--jump"):
+                JUMP = True
         
         # CHECK OPTIONS
         if MONITOR == "" and FILE == "" and KARMA == False:
@@ -103,7 +107,7 @@ def parseOptions(argv):
         for i in TEMP:
             CHANNEL.append(int(i))
         
-        return (INTERFACE, TIME, LOG, CHANNEL, MONITOR, FILE, DELAY, ALERT, KARMA)
+        return (INTERFACE, TIME, LOG, CHANNEL, MONITOR, FILE, DELAY, ALERT, KARMA, JUMP)
                     
     except getopt.GetoptError:           
         usage()
@@ -161,7 +165,7 @@ def sendMail(MSG):
 # GLOBAL VARIABLES
 # -------------------------
 
-(INTERFACE, TIME, LOG, CHANNEL, MONITOR, FILE, DELAY, ALERT, KARMA) = parseOptions(sys.argv[1:])
+(INTERFACE, TIME, LOG, CHANNEL, MONITOR, FILE, DELAY, ALERT, KARMA, JUMP) = parseOptions(sys.argv[1:])
 
 INVENTORY = {}
 ROGUE = {}
@@ -314,9 +318,10 @@ def stop_channel_hop(signal, frame):
 
 
 try:
-    channel_hop = Process(target = channel_hopper, args=(INTERFACE,))
-    channel_hop.start()
-    signal.signal(signal.SIGINT, stop_channel_hop)
+    if JUMP:
+        channel_hop = Process(target = channel_hopper, args=(INTERFACE,))
+        channel_hop.start()
+        signal.signal(signal.SIGINT, stop_channel_hop)
     
     sniff(iface=INTERFACE, prn=sniffer, store=False,
           lfilter=lambda p: (Dot11Beacon in p or Dot11ProbeResp in p))

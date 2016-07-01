@@ -18,7 +18,7 @@
 <br><b>Alert</b>: enables|disables email alerts
 <br><b>Email</b>: Sender and Recipient for email alerts.
 <br><b>SMTP</b>: smtp server to send email alerts (server | port | user | pass).
-<br><b>Channel</b>: channels to be scanned for detecting rogue APs.
+<br><b>Channel</b>: channels to be scanned for detecting rogue APs (enable|disable channel hopping).
 <br>
 <br>SMTP setup (example):
 <br>
@@ -61,6 +61,7 @@ Command line usage: ./scan-rogue -i INTERFACE {options}
 <br><div class="block">-f [file] --file=[file]</div> 		ap list to monitor [format: ssid|bssid,bssid] (from file)"
 <br><div class="block">-d [seconds] --delay=[seconds]</div> seconds between alerts"
 <br><div class="block">-a --alert</div> 					enables email alerts"
+<br><div class="block">-j --jump</div> 						enables channel hopping"
 <br><div class="block">-h</div> 							Print this help message."
 
 </div>

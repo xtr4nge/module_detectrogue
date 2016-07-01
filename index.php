@@ -202,6 +202,7 @@ Loading, please wait...
             </h5>
             <hr>
             <h4>
+                <input id="detectrogue_jump" type="checkbox" name="my-checkbox" <? if ($mod_detectrogue_jump == "1") echo "checked"; ?> onclick="setCheckbox(this, 'mod_detectrogue_jump')" >
                 CHANNEL
             </h4>
                 <div id="channel">
