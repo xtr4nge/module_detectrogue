@@ -88,7 +88,7 @@ def parseOptions(argv):
             elif opt in ("-f", "--file"):
                 FILE = arg
             elif opt in ("-d", "--delay"):
-                DELAY = arg
+                DELAY = int(arg)
             elif opt in ("-a", "--alert"):
                 ALERT = True
             elif opt in ("-k", "--karma"):
